@@ -2,52 +2,89 @@
 using namespace std;
 #include <algorithm>
 #include <list>
-
-
+#include <map>
+#include <queue>
 void displayList(const std::list<int>& myList) {
     for (const auto& element : myList) {
         std::cout << element << " ";
     }
-    std::cout << std::endl;
+    cout << std::endl;
 }
 class graph
 {
 private:
-    int count;
-    pair<int, list<int>>* array;
+    
+    map<int,list<int>> adjacency;
 public:
-    graph(int temp[], int c)
+    graph(int array[],int size)
     {
-        count = c;
-        array = new pair<int, list<int>>[c];
-        for (int i = 0; i < c; i++)
+        
+        for (int i = 0; i < size; i++)
         {
-            array[i].first = temp[i];
+            list<int> temp;
+            adjacency.insert(pair<int,list<int>>(array[i], temp));
         }
     }
     void addedge(int x, int y)
     {
-        for (int i = 0; i < count; i++)
-        {
-            if (array[i].first == x)
-            {
-                array[i].second.push_back(y);
-            }
-            if (array[i].first == y)
-            {
-                array[i].second.push_back(x);
-            }
-        }
+        adjacency[x].push_back(y);
+        adjacency[y].push_back(x);
     }
 
     void print_adjecency_list()
     {
-        for (int i = 0; i < count; i++)
+        cout << "adjecency list: " << endl;
+        for (const auto& pair : adjacency)
         {
-            cout << array[i].first << " : ";
-            displayList(array[i].second);
+            std::cout << pair.first << "  :  ";
+            displayList(pair.second);
+            cout << endl;
         }
     }
+    
+    void BFS(int x)
+    {
+        cout << endl;
+        cout << "traversing using BFS: " << endl;
+       map<int, bool> visited;
+        
+        vector<int> completed;
+       
+        
+        for (const auto& pai : adjacency)
+        {
+     
+            visited.insert(pair<int, bool>(pai.first, false));
+        }
+        
+        queue<int>q;
+        visited[x]=true;
+        cout << "visited: " << x<<endl;
+
+        q.push(x);
+        int temp;
+        bool v = true;
+        while (!q.empty())
+        {
+            temp = q.front();
+            q.pop();
+            list<int>::iterator it;
+            for (it = adjacency[temp].begin(); it != adjacency[temp].end(); it++)
+            {
+                if (!visited[*it])
+                {
+                    cout << "visited: " << *it << endl;
+                    q.push(*it);
+                    visited[*it] = true;
+                }
+            }
+            
+            
+        }
+       
+    }
+    
+    
 };
 
 
@@ -60,10 +97,12 @@ int main()
     x.addedge(2, 4);
     x.addedge(2, 5);
     x.print_adjecency_list();
+    cout << endl;
+    x.BFS(5);
 
 
 }
-
+/*
 struct node
 {
     node* left, * right;
@@ -600,3 +639,4 @@ void insertion_sort(int array[], int size)
         array[it + 1] = temp;
     }
 }
+*/
